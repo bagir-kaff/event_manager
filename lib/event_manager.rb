@@ -57,12 +57,22 @@ def peak_hours(contents)
   list.sort_by {|_key, value| value}.reverse.to_h
 end
 
+def peak_days(contents)
+  list = contents.reduce({}) do |data,row|
+    registration_day = Date.strptime(row[:regdate],'%Y/%d/%m %k:%M').strftime("%A")
+    data[registration_day] = data[registration_day].to_i + 1
+    data
+  end
+  list.sort_by {|_key, value| value}.reverse.to_h
+end
+
 contents = CSV.open(
   'event_attendees.csv',
   headers: true,
   header_converters: :symbol
 ) #CSV object (enumerable)
   #converting header into symbol will make our column names mor uniform and easier to remember
+
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
@@ -70,7 +80,6 @@ contents.each do |row|
   zipcode = clean_zipcode(row[:zipcode])
 
   phone_number = clean_phone_number(row[:homephone])
-
 
   # legislators = legislators_by_zipcode(zipcode)
 
