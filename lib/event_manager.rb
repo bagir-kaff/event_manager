@@ -1,7 +1,7 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
-
+require 'time'
 #overwhelmed? take it slow, it s a lot
 
 def clean_zipcode(zipcode)
@@ -48,13 +48,21 @@ template_letter = File.read ('form_letter.html')
 erb_template = ERB.new template_letter
 puts 'Event Manager Initialized!'
 
+def peak_hours(contents)
+  list = contents.reduce({}) do |data,row|
+    registration_hour = Time.strptime(row[:regdate],'%Y/%d/%m %k:%M').hour
+    data[registration_hour] = data[registration_hour].to_i + 1
+    data
+  end
+  list.sort_by {|_key, value| value}.reverse.to_h
+end
+
 contents = CSV.open(
   'event_attendees.csv',
   headers: true,
   header_converters: :symbol
 ) #CSV object (enumerable)
   #converting header into symbol will make our column names mor uniform and easier to remember
-
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
@@ -63,9 +71,10 @@ contents.each do |row|
 
   phone_number = clean_phone_number(row[:homephone])
 
-  legislators = legislators_by_zipcode(zipcode)
 
-  form_letter = erb_template.result(binding)
+  # legislators = legislators_by_zipcode(zipcode)
+
+  # form_letter = erb_template.result(binding)
  
-  generate_letter(id,form_letter)
+  # generate_letter(id,form_letter)
 end
