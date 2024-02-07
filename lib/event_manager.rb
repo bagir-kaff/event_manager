@@ -81,9 +81,9 @@ contents.each do |row|
 
   phone_number = clean_phone_number(row[:homephone])
 
-  # legislators = legislators_by_zipcode(zipcode)
+  legislators = legislators_by_zipcode(zipcode)
 
-  # form_letter = erb_template.result(binding)
+  form_letter = erb_template.result(binding)
  
-  # generate_letter(id,form_letter)
+  generate_letter(id,form_letter)
 end
