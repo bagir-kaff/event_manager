@@ -34,6 +34,16 @@ def generate_letter(id,template)
   end
 end
 
+def clean_phone_number(number)
+  number = number.tr('- ','')
+  if number.length ==10
+    number
+  elsif number.length == 11 && number[0]==1
+    number[1..10]
+  else 
+    'bad_format'
+  end
+end
 template_letter = File.read ('form_letter.html')
 erb_template = ERB.new template_letter
 puts 'Event Manager Initialized!'
@@ -50,6 +60,8 @@ contents.each do |row|
   name = row[:first_name]
 
   zipcode = clean_zipcode(row[:zipcode])
+
+  phone_number = clean_phone_number(row[:homephone])
 
   legislators = legislators_by_zipcode(zipcode)
 
